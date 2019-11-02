@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 function Welcome(props) {
 	function handleLogout() {
 		props.changeState();
 	}
-	const [, setadmin] = useState(null);
-	let updateEmail;
-	function handleAdminChange(e) {
-		updateEmail = e.target.value;
+	// const [, setadmin] = useState(null);
+	function handleAdminAdd(e) {
+		let updateEmail = e.target.value;
 		fetch('http://localhost:8080/admin/add', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: e.target.value
+				email: updateEmail
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -20,16 +19,16 @@ function Welcome(props) {
 		})
 			.then((res) => res.json())
 			.then((response) => {
-				handleAdmin();
+				handleAdminChange(updateEmail);
 			})
 			.catch((error) => console.error('Error:', error));
 	}
 	function handleAdminRemove(e) {
-		updateEmail = e.target.value;
+		let updateEmail = e.target.value;
 		fetch('http://localhost:8080/admin/remove', {
 			method: 'POST',
 			body: JSON.stringify({
-				email: e.target.value
+				email: updateEmail
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -37,22 +36,15 @@ function Welcome(props) {
 		})
 			.then((res) => res.json())
 			.then((response) => {
-				handleAdmin();
+				handleAdminChange(updateEmail);
 			})
 			.catch((error) => console.error('Error:', error));
 	}
-	function handleAdmin() {
-		if (props.users) {
-			for (let i = 0; i < props.users.length; i++) {
-				if (props.users[i].email === updateEmail) {
-					if (props.users[i].admin) {
-						setadmin(false);
-					} else {
-						setadmin(true);
-					}
-				}
-			}
-		}
+	function handleAdminChange(updateEmail) {
+		let updatedUsers = props.users;
+		let index = updatedUsers.findIndex((obj) => obj.email === updateEmail);
+		updatedUsers[index].admin = !updatedUsers[index].admin;
+		props.setUsers(updatedUsers);
 	}
 
 	return (
@@ -108,7 +100,7 @@ function Welcome(props) {
 															id='make-admin-btn'
 															value={obj.email}
 															onClick={
-																handleAdminChange
+																handleAdminAdd
 															}
 														>
 															add

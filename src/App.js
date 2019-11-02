@@ -74,6 +74,7 @@ class App extends React.Component {
 									loggedIn={this.state.loggedIn}
 									user={this.state.user}
 									users={this.state.users}
+									setUsers={(users) => this.setUsers(users)}
 								/>
 							)}
 						/>
