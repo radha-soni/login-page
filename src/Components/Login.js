@@ -52,18 +52,33 @@ class Login extends React.Component {
         .then(response => {
           if (response.error === true) {
             if (response.message === "Invalid password") {
+              console.log(response.message);
+              fetch("http://localhost:4000/loginFailed", {
+                method: "POST",
+                body: JSON.stringify({
+                  email: this.state.email,
+                  message: "Invalid password"
+                }),
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json"
+                }
+              })
+                .then(res => res.json())
+                .then(console.log(response));
               this.setState({
                 messagePassword: response.message,
                 messageEmail: "",
                 formError: true
               });
             }
-            if (response.message === "User does not exist") {
-              this.setState({
-                messageEmail: response.message,
-                messagePassword: ""
-              });
-            }
+            // if (response.message === "User does not exist") {
+            //   console.log(response.message);
+            //   this.setState({
+            //     messageEmail: response.message,
+            //     messagePassword: ""
+            //   });
+            // }
           } else {
             fetch("https://api.ipify.org?format=json", {
               method: "GET"
@@ -71,6 +86,7 @@ class Login extends React.Component {
               .then(res => res.json())
 
               .then(response => {
+                console.log(response);
                 fetch(
                   "https://geo.ipify.org/api/v1?apiKey=at_uamlMmgiyz0k1HPWrJQC1VsaVhpYc&ipAddress=" +
                     response.ip,
@@ -81,11 +97,13 @@ class Login extends React.Component {
                   .then(res => res.json())
 
                   .then(response => {
-                    fetch("http://localhost:4000/eventTrigger", {
+                    console.log(response);
+                    fetch("http://localhost:4000/loginEvent", {
                       method: "POST",
                       body: JSON.stringify({
                         email: this.state.email,
-                        userIp: response.ip,
+                        message: "Login successful",
+                        ip_address: response.ip,
                         location:
                           response.location.region +
                           " " +
@@ -111,39 +129,6 @@ class Login extends React.Component {
           }
         })
         .catch(error => console.error("Error:", error));
-
-      // fetch("https://api.ipify.org?format=json", {
-      //   method: "GET"
-      // })
-      //   .then(res => res.json())
-
-      //   .then(response => {
-      //     fetch(
-      //       "https://geo.ipify.org/api/v1?apiKey=at_uamlMmgiyz0k1HPWrJQC1VsaVhpYc&ipAddress=" +
-      //         response.ip,
-      //       {
-      //         method: "GET"
-      //       }
-      //     )
-      //       .then(res => res.json())
-
-      //       .then(response => {
-      //         console.log(response);
-      //         fetch("http://localhost:4000/", {
-      //           method: "POST",
-      //           body: JSON.stringify({
-      //             email: this.state.email,
-      //             userIp: response.ip,
-      //             location:
-      //               response.location.region + " " + response.location.country
-      //           }),
-      //           headers: {
-      //             Accept: "application/json",
-      //             "Content-Type": "application/json"
-      //           }
-      //         });
-      //       });
-      //   });
     }
   }
 

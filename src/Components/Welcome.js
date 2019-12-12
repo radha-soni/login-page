@@ -4,8 +4,18 @@ import { Redirect } from "react-router-dom";
 function Welcome(props) {
   function handleLogout() {
     props.changeState();
+
+    fetch("http://localhost:4000/logout", {
+      method: "POST",
+      body: JSON.stringify({
+        email: props.user.email
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res => res.json());
   }
-  // const [, setadmin] = useState(null);
+
   function handleAdminAdd(e) {
     let updateEmail = e.target.value;
     fetch("http://localhost:3000/admin/add", {

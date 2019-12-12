@@ -41,7 +41,7 @@ class Register extends React.Component {
         password: ${this.state.password}
         `
       );
-      fetch("http://localhost:3000/register", {
+      fetch("http://localhost:3001/register", {
         method: "POST",
         body: JSON.stringify({
           firstName: this.state.firstName,
@@ -60,6 +60,19 @@ class Register extends React.Component {
           this.props.history.push("/login");
         })
         .catch(error => console.error("Error:", error));
+      fetch("http://localhost:4000/addUsers", {
+        method: "POST",
+        body: JSON.stringify({
+          email: this.state.email
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(response => {
+          console.log("Success:", console.log(response));
+        });
     } else {
       console.log("Form invalid");
     }
