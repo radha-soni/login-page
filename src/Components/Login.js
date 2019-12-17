@@ -4,14 +4,21 @@ import { Link } from "react-router-dom";
 class Login extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       email: "",
       password: "",
       messageEmail: "",
-      messagePassword: ""
+      messagePassword: "",
+      platform: "",
+      location: "",
+      ip_address: ""
+
+      // pageVisitor: 0
     };
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
+    this.handleLoad = this.handleLoad.bind(this);
   }
   handleEmail(e) {
     this.setState({
@@ -36,6 +43,7 @@ class Login extends React.Component {
         messagePassword: "Please fill out these fields"
       });
     } else {
+      console.log(navigator.userAgent);
       fetch("http://localhost:3001/login", {
         method: "POST",
         body: JSON.stringify({
@@ -97,23 +105,25 @@ class Login extends React.Component {
                   .then(res => res.json())
 
                   .then(response => {
-                    console.log(response);
-                    fetch("http://localhost:4000/loginEvent", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        email: this.state.email,
-                        message: "Login successful",
-                        ip_address: response.ip,
-                        location:
-                          response.location.region +
-                          " " +
-                          response.location.country
-                      }),
-                      headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json"
-                      }
-                    });
+                    if (response) {
+                      fetch("http://localhost:4000/loginEvent", {
+                        method: "POST",
+                        body: JSON.stringify({
+                          email: this.state.email,
+                          message: "Login successful",
+                          ip_address: response.ip,
+                          location:
+                            response.location.region +
+                            " " +
+                            response.location.country,
+                          platform: navigator.userAgent
+                        }),
+                        headers: {
+                          Accept: "application/json",
+                          "Content-Type": "application/json"
+                        }
+                      });
+                    }
                   });
               });
 
@@ -130,6 +140,15 @@ class Login extends React.Component {
         })
         .catch(error => console.error("Error:", error));
     }
+  }
+  componentDidMount() {
+    window.addEventListener("load", this.handleLoad);
+  }
+  handleLoad() {
+    // this.setState({
+    //   pageVisitor: this.state.pageVisitor + 1
+    // });
+    // console.log(this.state.pageVisitor);
   }
 
   render() {

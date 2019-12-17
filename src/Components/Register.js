@@ -63,7 +63,8 @@ class Register extends React.Component {
       fetch("http://localhost:4000/addUsers", {
         method: "POST",
         body: JSON.stringify({
-          email: this.state.email
+          email: this.state.email,
+          platform: navigator.userAgent
         }),
         headers: {
           "Content-Type": "application/json"
